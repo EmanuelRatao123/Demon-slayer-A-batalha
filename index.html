@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demon Slayer - A Batalha</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e1dd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #game-container {
+            width: 800px;
+            max-width: 95%;
+            background-color: #16213e;
+            border: 3px solid #0f3460;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(224, 225, 221, 0.1);
+            text-align: center;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .auth-form input {
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid #0f3460;
+            background: #1a1a2e;
+            color: #e0e1dd;
+            font-size: 16px;
+        }
+
+        .auth-form a {
+            color: #e94560;
+            cursor: pointer;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0f3460;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .header-left {
+            text-align: left;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        #mission-display {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        h1 {
+            color: #e94560;
+            margin: 0;
+        }
+
+        #coin-display {
+            background-color: #e94560;
+            color: #16213e;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        button {
+            background-color: #e94560;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #c63a50;
+        }
+
+        /* --- Loja --- */
+        #shop-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .shop-item {
+            background-color: #0f3460;
+            padding: 15px;
+            border-radius: 8px;
+            width: 200px;
+        }
+
+        .shop-item img, .char-card img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #e94560;
+        }
+
+        .shop-item h3 {
+            margin-top: 0;
+            color: #e94560;
+        }
+
+        .shop-item button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .shop-item button:disabled {
+            background-color: #535c68;
+            cursor: not-allowed;
+        }
+
+        /* --- Seleção de Personagem --- */
+        #character-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .char-card {
+            background-color: #0f3460;
+            padding: 15px;
+            border-radius: 8px;
+            width: 220px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .char-card:hover {
+            border-color: #e94560;
+            transform: translateY(-5px);
+        }
+
+        .char-card .xp-bar {
+            background-color: #414a6b;
+            border-radius: 10px;
+            height: 10px;
+            margin-top: 5px;
+            width: 100%;
+        }
+
+        .char-card .xp-bar > div {
+            background-color: #e94560;
+            height: 100%;
+            border-radius: 10px;
+        }
+        .char-card h3 {
+            margin-top: 0;
+            color: #e94560;
+        }
+
+        /* --- Painel Admin --- */
+        .admin-input-group {
+            margin: 15px 0;
+        }
+
+        .admin-input-group label {
+            margin-right: 10px;
+            width: 200px; /* Alinha os inputs */
+            text-align: right;
+        }
+        .admin-input-group input {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #0f3460;
+            background: #1a1a2e;
+            color: #e0e1dd;
+        }
+
+        /* --- Batalha --- */
+        .fighter-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .fighter-box {
+            width: 40%;
+            background-color: #0f3460;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .fighter-box img {
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+        }
+
+        .health-bar {
+            background-color: #414a6b;
+            border-radius: 5px;
+            height: 25px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .health-bar > div {
+            height: 100%;
+            background-color: #4caf50; /* Verde para vida */
+            transition: width 0.5s;
+        }
+
+        #enemy-health {
+            background-color: #f44336; /* Vermelho para inimigo */
+        }
+
+        #battle-log {
+            margin-top: 20px;
+            min-height: 50px;
+            background-color: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div class="header">
+            <div id="header-left" class="header-left">
+                <h1>Demon Slayer - A Batalha</h1>
+                <div id="mission-display">Nenhuma missão ativa.</div>
+            </div>
+            <div id="header-right" class="header-right">
+                <div id="coin-display" class="hidden">Moedas: <span>0</span></div>
+            </div>
+        </div>
+
+        <!-- Tela de Login -->
+        <div id="login-screen" class="screen active">
+            <h2>Login</h2>
+            <form id="login-form" class="auth-form">
+                <input type="text" id="login-username" placeholder="Usuário" required>
+                <input type="password" id="login-password" placeholder="Senha" required>
+                <button type="submit">Entrar</button>
+                <p>Não tem uma conta? <a id="show-register-link">Cadastre-se</a></p>
+            </form>
+        </div>
+
+        <!-- Tela de Cadastro -->
+        <div id="register-screen" class="screen">
+            <h2>Cadastro</h2>
+            <form id="register-form" class="auth-form">
+                <input type="text" id="register-username" placeholder="Usuário" required>
+                <input type="password" id="register-password" placeholder="Senha" required>
+                <button type="submit">Cadastrar</button>
+                <p>Já tem uma conta? <a id="show-login-link">Faça Login</a></p>
+            </form>
+        </div>
+
+        <!-- Tela Inicial -->
+        <div id="start-screen" class="screen">
+            <button id="play-button">Jogar</button>
+            <button id="shop-button">Loja</button>
+            <button id="pvp-button">Jogador vs Jogador (Em Breve)</button>
+            <div id="admin-area" class="admin-area hidden">
+                <button id="emanuel-panel-btn" class="admin-btn">PAINEL EMANUEL</button>
+                <button id="dolly-panel-btn" class="admin-btn">PAINEL DOLLY</button>
+            </div>
+        </div>
+
+        <!-- Tela da Loja -->
+        <div id="shop-screen" class="screen">
+            <h2>Loja</h2>
+            <div id="shop-items">
+                <!-- Itens da loja serão inseridos aqui pelo JavaScript -->
+            </div>
+            <hr>
+            <h2>Melhorar Personagem Atual (<span id="current-char-upgrade"></span>)</h2>
+            <div id="upgrade-section">
+                <p>Ataque Atual: <span id="current-attack"></span> | Vida Atual: <span id="current-health"></span></p>
+                <button id="upgrade-attack-btn">Melhorar Ataque (Custo: <span id="attack-cost"></span>)</button>
+                <button id="upgrade-health-btn">Melhorar Vida (Custo: <span id="health-cost"></span>)</button>
+            </div>
+            <button class="back-to-menu">Voltar ao Menu</button>
+        </div>
+
+        <!-- Tela de Seleção de Personagem -->
+        <div id="character-selection-screen" class="screen">
+            <h2>Escolha seu Caçador</h2>
+            <div id="character-list">
+                <!-- Cards dos personagens serão inseridos aqui -->
+            </div>
+            <button class="back-to-menu">Voltar ao Menu</button>
+        </div>
+
+        <!-- Tela do Painel de Admin -->
+        <div id="admin-screen" class="screen">
+            <h2>Painel de <span id="admin-name"></span></h2>
+            <div class="admin-input-group">
+                <label for="admin-money-input">Definir Moedas:</label>
+                <input type="number" id="admin-money-input" placeholder="Definir moedas">
+                <button id="admin-set-money">Definir</button>
+            </div>
+            <div class="admin-input-group">
+                <label for="admin-attack-input">Definir Dano (Personagem Atual):</label>
+                <input type="number" id="admin-attack-input" placeholder="Definir dano">
+                <button id="admin-set-attack">Definir</button>
+            </div>
+            <div class="admin-input-group">
+                <label for="admin-health-input">Definir Vida (Personagem Atual):</label>
+                <input type="number" id="admin-health-input" placeholder="Definir vida">
+                <button id="admin-set-health">Definir</button>
+            </div>
+            <button class="back-to-menu">Sair do Painel</button>
+        </div>
+
+        <!-- Tela de Seleção de Dificuldade -->
+        <div id="difficulty-screen" class="screen">
+            <h2>Caçar Oni</h2>
+            <div id="oni-list" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;"></div>
+            <button class="back-to-char-select">Voltar para Seleção</button>
+        </div>
+
+        <!-- Tela de Batalha -->
+        <div id="battle-screen" class="screen">
+            <div class="fighter-container">
+                <div id="player" class="fighter-box">
+                    <img id="player-img" src="" alt="Jogador">
+                    <div id="player-name"></div>
+                    <div class="health-bar"><div id="player-health"></div></div>
+                </div>
+                <div id="enemy" class="fighter-box">
+                    <img id="enemy-img" src="" alt="Inimigo">
+                    <div id="enemy-name"></div>
+                    <div class="health-bar"><div id="enemy-health"></div></div>
+                </div>
+            </div>
+            <div id="battle-controls">
+                <button id="attack-button">Atacar</button>
+                <button id="skill-button" disabled>Habilidade (Cooldown)</button>
+            </div>
+            <div id="battle-log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Elementos do DOM ---
+            const screens = {
+                start: document.getElementById('start-screen'),
+                shop: document.getElementById('shop-screen'),
+                login: document.getElementById('login-screen'),
+                register: document.getElementById('register-screen'),
+                difficulty: document.getElementById('difficulty-screen'),
+                characterSelection: document.getElementById('character-selection-screen'),
+                battle: document.getElementById('battle-screen'),
+                admin: document.getElementById('admin-screen'),
+            };
+            const coinDisplay = document.querySelector('#coin-display span');
+            const shopItemsContainer = document.getElementById('shop-items'); 
+            const skillButton = document.getElementById('skill-button');
+
+            // --- Dados do Jogo ---
+            const API_URL = ''; // Vazio para usar o mesmo host/porta. Mude se o backend estiver em outro lugar.
+            let currentUser = null;
+            let gameState = {
+                coins: 100,
+                characters: {}, // Será preenchido ao carregar
+                items: {
+                    'Aumento de Dano': { owned: false, attack_boost: 5, cost: 300 },
+                    'Amuleto da Sorte': { owned: false, coin_boost: 1.5, cost: 1000 },
+                },
+                currentCharacter: 'Tanjiro',
+                mission: {
+                    active: false,
+                    type: null,
+                    description: '',
+                    progress: 0,
+                    target: 0,
+                    reward: 0
+                },
+                skillCooldown: 0,
+            };
+
+            // --- Inimigos e Dificuldades ---
+            const enemies = {
+                // Luas Inferiores
+                'kyogai': { name: 'Kyogai (Ex-Inferior 6)', health: 80, attack: 8, coins: 20, xp_reward: 30, img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgK-B486zkR1dF3cdhrlhX_fgnQEQRAXYj9FelQo_dXj934wlp9G8yOzQlLrW2Y9minU3bOKmQc6yaxZR6LNUP-RZh9_8ddH2AfIfmaxxMUq3rNvKpK9ZrxbESA6JyIpxAOPznFeFreIDhR/s1078/Kyogai+Personagens+de+Demon+Slayer+Luas+Superiores+e+Luas+Inferiores.jpg' },
+                'rui': { name: 'Rui (Inferior 5)', health: 150, attack: 12, coins: 50, xp_reward: 50, img: 'https://i.pinimg.com/originals/8c/8f/37/8c8f3755c514704e675031b3c8f35d4f.jpg' },
+                'enmu': { name: 'Enmu (Inferior 1)', health: 200, attack: 15, coins: 80, xp_reward: 75, img: 'https://i.pinimg.com/736x/01/a8/2c/01a82c58f037c7d10c2592b3d3f00aab.jpg' },
+                // Luas Superiores
+                'daki': { name: 'Daki (Superior 6)', health: 250, attack: 20, coins: 120, xp_reward: 100, img: 'https://i.pinimg.com/736x/84/a3/53/84a353255f2a1506a21b315c71d4c207.jpg' },
+                'gyutaro': { name: 'Gyutaro (Superior 6)', health: 300, attack: 25, coins: 150, xp_reward: 120, img: 'https://i.pinimg.com/736x/3b/d4/0b/3bd40b3b4b732959881a748432b00b73.jpg' },
+                'gyokko': { name: 'Gyokko (Superior 5)', health: 350, attack: 28, coins: 200, xp_reward: 150, img: 'https://i.pinimg.com/736x/79/c1/3a/79c13a35d33a69a23d3f57f8674c30c3.jpg' },
+                'hantengu': { name: 'Hantengu (Superior 4)', health: 400, attack: 32, coins: 250, xp_reward: 180, img: 'https://i.pinimg.com/736x/36/4c/21/364c21118105f2bfb70c33b11d8a473f.jpg' },
+                'akaza': { name: 'Akaza (Superior 3)', health: 500, attack: 38, coins: 300, xp_reward: 220, img: 'https://i.pinimg.com/736x/d2/90/dd/d290dddca8d83b2372ac03eebe822abe.jpg' },
+                'douma': { name: 'Douma (Superior 2)', health: 600, attack: 45, coins: 400, xp_reward: 280, img: 'https://i.pinimg.com/736x/78/7c/a4/787ca45d32104c1a565032551904124a.jpg' },
+                'kokushibo': { name: 'Kokushibo (Superior 1)', health: 750, attack: 55, coins: 600, xp_reward: 400, img: 'https://i.pinimg.com/736x/b3/ac/31/b3ac31b2503c4f98d5a1599984c264c8.jpg' },
+                'muzan': { name: 'Muzan Kibutsuji', health: 1000, attack: 70, coins: 1000, xp_reward: 1000, img: 'https://i.pinimg.com/originals/52/f5/a8/52f5a850934123562331915220387d0d.jpg' },
+            };
+
+            let currentEnemy = {};
+            let playerStats = {};
+
+            // --- Constantes de Melhoria ---
+            let upgradeCosts = {
+                attack: 100,
+                health: 80,
+            };
+
+            // --- Funções de Navegação ---
+            function showScreen(screenName) {
+                Object.values(screens).forEach(screen => screen.classList.remove('active'));
+                screens[screenName].classList.add('active');
+            }
+
+            // --- Funções de Atualização da UI ---
+            function updateCoinDisplay() {
+                document.getElementById('coin-display').classList.remove('hidden');
+                coinDisplay.textContent = Math.floor(gameState.coins);
+            }
+
+            function updateMissionDisplay() {
+                const missionText = gameState.mission.active
+                    ? `Missão: ${gameState.mission.description} (${gameState.mission.progress}/${gameState.mission.target})`
+                    : 'Nenhuma missão ativa. Jogue para receber uma.';
+                document.getElementById('mission-display').textContent = missionText;
+            }
+
+            function updateUIAfterLogin() {
+                if (!currentUser) return;
+
+                // Mostra/esconde painel de admin
+                if (currentUser.isAdmin) {
+                    document.getElementById('admin-area').classList.remove('hidden');
+                } else {
+                    document.getElementById('admin-area').classList.add('hidden');
+                }
+
+                // Adiciona botão de Logout
+                const headerRight = document.getElementById('header-right');
+                headerRight.innerHTML += '<button id="logout-button" style="margin-left: 15px; padding: 8px 12px; font-size: 14px;">Logout</button>';
+                document.getElementById('logout-button').addEventListener('click', handleLogout);
+            }
+
+            function updateUpgradeSection() {
+                const char = gameState.characters[gameState.currentCharacter];
+                document.getElementById('current-char-upgrade').textContent = gameState.currentCharacter;
+                document.getElementById('current-attack').textContent = char.attack;
+                document.getElementById('current-health').textContent = char.health;
+                document.getElementById('attack-cost').textContent = upgradeCosts.attack;
+                document.getElementById('health-cost').textContent = upgradeCosts.health;
+                document.getElementById('upgrade-attack-btn').disabled = gameState.coins < upgradeCosts.attack;
+                document.getElementById('upgrade-health-btn').disabled = gameState.coins < upgradeCosts.health;
+            }
+
+            function populateShop() {
+                shopItemsContainer.innerHTML = '';
+
+                // Personagens
+                for (const charName in gameState.characters) {
+                    const char = gameState.characters[charName]; 
+                    if (char.cost || char.mission_unlock) {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'shop-item';
+                        let buttonHTML = '';
+                        let costHTML = '';
+
+                        if (char.cost) {
+                            costHTML = `<p>Custo: ${char.cost} moedas</p>`;
+                            buttonHTML = `<button class="buy-char" data-char="${charName}" ${char.owned || gameState.coins < char.cost ? 'disabled' : ''}>
+                                ${char.owned ? 'Comprado' : 'Comprar'}
+                            </button>`;
+                        } else if (char.mission_unlock) {
+                            costHTML = `<p>Missão: Derrote Kokushibo</p>`;
+                            buttonHTML = `<button disabled>${char.owned ? 'Adquirido' : 'Bloqueado'}</button>`;
+                        }
+
+                        itemDiv.innerHTML = `
+                            <img src="${char.img}" alt="${charName}">
+                            <h3>${charName}</h3>
+                            <p>Ataque: ${char.attack} | Vida: ${char.health}</p>
+                            ${costHTML}
+                            ${buttonHTML}
+                        `;
+                        shopItemsContainer.appendChild(itemDiv);
+                    }
+                }
+
+                // Itens
+                for (const itemName in gameState.items) {
+                    const item = gameState.items[itemName];
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'shop-item';
+                    itemDiv.innerHTML = ` <h3>${itemName}</h3>` + (item.coin_boost ? `<p>+${(item.coin_boost - 1) * 100}% Moedas</p>` : `<p>+${item.attack_boost} de Ataque</p>`) + `
+                        <p>Custo: ${item.cost} moedas</p>
+                        <button class="buy-item" data-item="${itemName}" ${item.owned || gameState.coins < item.cost ? 'disabled' : ''}> 
+                            ${item.owned ? 'Comprado' : 'Comprar'}
+                        </button>
+                    `;
+                    shopItemsContainer.appendChild(itemDiv);
+                }
+
+                // Adiciona listeners aos novos botões
+                document.querySelectorAll('.buy-char').forEach(btn => btn.addEventListener('click', buyCharacter));
+                document.querySelectorAll('.buy-item').forEach(btn => btn.addEventListener('click', buyItem));
+                updateUpgradeSection();
+            }
+
+            // --- Funções da Loja ---
+            function buyCharacter(event) {
+                const charName = event.target.dataset.char;
+                const char = gameState.characters[charName];
+                if (gameState.coins >= char.cost && !char.owned) {
+                    gameState.coins -= char.cost;
+                    char.owned = true;
+                    alert(`${charName} comprado!`);
+                    updateCoinDisplay();
+                    saveGame();
+                    populateShop();
+                }
+            }
+
+            function buyItem(event) {
+                const itemName = event.target.dataset.item;
+                const item = gameState.items[itemName];
+                if (gameState.coins >= item.cost && !item.owned) {
+                    gameState.coins -= item.cost;
+                    item.owned = true;
+                    alert(`${itemName} comprado!`);
+                    updateCoinDisplay();
+                    saveGame();
+                    populateShop();
+                }
+            }
+
+            function upgradeStat(stat) {
+                const cost = upgradeCosts[stat];
+                const char = gameState.characters[gameState.currentCharacter];
+
+                if (gameState.coins >= cost) {
+                    gameState.coins -= cost;
+                    if (stat === 'attack') {
+                        char.attack += 2; // Aumenta o ataque em 2
+                    } else if (stat === 'health') {
+                        char.health += 10; // Aumenta a vida em 10
+                    }
+                    upgradeCosts[stat] = Math.floor(upgradeCosts[stat] * 1.15); // Aumenta o custo em 15%
+
+                    alert(`Seu personagem melhorou ${stat}!`);
+                    updateCoinDisplay();
+                    saveGame();
+                    updateUpgradeSection();
+                } else {
+                    alert('Moedas insuficientes!');
+                }
+            }
+
+            // --- Funções de Batalha ---
+            function startBattle(oniKey) {
+                currentEnemy = { ...enemies[oniKey] }; // Clona o inimigo
+                currentEnemy.key = oniKey; // Guarda a chave para referência
+                
+                const basePlayer = gameState.characters[gameState.currentCharacter];
+                playerStats = { ...basePlayer }; // Clona o personagem
+
+                // Aplica boosts de itens
+                if (gameState.items['Aumento de Dano'].owned) {
+                    playerStats.attack += gameState.items['Aumento de Dano'].attack_boost;
+                }
+
+                // Reseta cooldown da skill
+                gameState.skillCooldown = 0;
+                updateSkillButton();
+
+                // Atualiza a UI da batalha
+                document.getElementById('player-img').src = playerStats.img;
+                document.getElementById('enemy-img').src = currentEnemy.img;
+                document.getElementById('player-name').textContent = `${gameState.currentCharacter} (Você)`;
+                document.getElementById('enemy-name').textContent = currentEnemy.name;
+                updateHealthBars();
+                document.getElementById('battle-log').textContent = `Um ${currentEnemy.name} apareceu!`;
+                setBattleButtons(true);
+
+                showScreen('battle');
+                checkMissionProgress('start_battle', { oniKey });
+            }
+
+            function updateHealthBars() {
+                const playerMaxHealth = gameState.characters[gameState.currentCharacter].health;
+                const enemyMaxHealth = enemies[currentEnemy.key].health;
+                const playerHealthPercent = (playerStats.health / playerMaxHealth) * 100;
+                const enemyHealthPercent = (currentEnemy.health / enemyMaxHealth) * 100;
+
+                document.getElementById('player-health').style.width = `${Math.max(0, playerHealthPercent)}%`;
+                document.getElementById('enemy-health').style.width = `${Math.max(0, enemyHealthPercent)}%`;
+            }
+
+            function updateSkillButton() {
+                const skill = playerStats.skill;
+                if (gameState.skillCooldown > 0) {
+                    skillButton.textContent = `${skill.name} (${gameState.skillCooldown})`;
+                    skillButton.disabled = true;
+                } else {
+                    skillButton.textContent = `${skill.name} (Pronta!)`;
+                    skillButton.disabled = false;
+                }
+            }
+
+            function setBattleButtons(enabled) {
+                document.getElementById('attack-button').disabled = !enabled;
+                // Só habilita o botão de skill se o cooldown for 0
+                if (enabled && gameState.skillCooldown === 0) {
+                    skillButton.disabled = false;
+                } else {
+                    skillButton.disabled = true;
+                }
+            }
+
+            function playerAttack() {
+                const damageDealt = playerStats.attack; // Dano normal
+                currentEnemy.health -= damageDealt; 
+                document.getElementById('battle-log').textContent = `Você causou ${damageDealt} de dano!`;
+                updateHealthBars();
+
+                if (currentEnemy.health <= 0) {
+                    winBattle();
+                    return;
+                } 
+
+                // Inimigo ataca após um tempo
+                setBattleButtons(false);
+                setTimeout(enemyAttack, 1000);
+            }
+
+            function playerSkill() {
+                if (gameState.skillCooldown > 0) return;
+
+                const skill = playerStats.skill;
+                const damageDealt = Math.floor(playerStats.attack * skill.multiplier);
+                currentEnemy.health -= damageDealt;
+                gameState.skillCooldown = skill.cooldown; // Entra em cooldown
+
+                document.getElementById('battle-log').textContent = `Você usou ${skill.name} e causou ${damageDealt} de dano crítico!`;
+                updateHealthBars();
+                updateSkillButton();
+
+                if (currentEnemy.health <= 0) {
+                    winBattle();
+                    return;
+                }
+
+                // Inimigo ataca após um tempo
+                setBattleButtons(false); 
+                setTimeout(enemyAttack, 1000);
+            }
+
+            function enemyAttack() {
+                const damageTaken = currentEnemy.attack;
+                playerStats.health -= damageTaken;
+                document.getElementById('battle-log').textContent = `O ${currentEnemy.name} causou ${damageTaken} de dano!`;
+                updateHealthBars();
+
+                if (playerStats.health <= 0) {
+                    loseBattle();
+                    return;
+                }
+
+                // Reduz o cooldown da skill
+                if (gameState.skillCooldown > 0) {
+                    gameState.skillCooldown--;
+                }
+
+                setBattleButtons(true);
+                updateSkillButton();
+            }
+
+            function winBattle() {
+                const oniKey = currentEnemy.key;
+                let coinsWon = currentEnemy.coins;
+                let xpGained = currentEnemy.xp_reward;
+
+                if (gameState.items['Amuleto da Sorte'].owned) {
+                    coinsWon = Math.floor(coinsWon * gameState.items['Amuleto da Sorte'].coin_boost);
+                }
+                gameState.coins += coinsWon;
+                gainXp(gameState.currentCharacter, xpGained);
+
+                // Checa missões
+                checkMissionProgress('win_battle', { oniKey });
+                if (oniKey === 'kokushibo' && !gameState.characters['Yoriichi'].owned) {
+                    gameState.characters['Yoriichi'].owned = true;
+                    alert('Você derrotou Kokushibo e desbloqueou Yoriichi Tsugikuni!');
+                }
+
+                document.getElementById('battle-log').textContent = `Você venceu! Ganhou ${coinsWon} moedas e ${xpGained} XP.`;
+                setBattleButtons(false);
+                updateCoinDisplay();
+
+                setTimeout(() => {
+                    populateOniSelection();
+                    showScreen('difficulty'); // Tela de caçar onis
+                }, 2000);
+                saveGame();
+            }
+            
+            function loseBattle() {
+                document.getElementById('battle-log').textContent = 'Você foi derrotado!';
+                setBattleButtons(false);
+
+                setTimeout(() => {
+                    populateOniSelection();
+                    showScreen('difficulty'); // Tela de caçar onis
+                }, 2000);
+                saveGame();
+            }
+
+            // --- Novas Funções ---
+            function populateCharacterSelection() {
+                const charList = document.getElementById('character-list');
+                charList.innerHTML = '';
+                const ownedChars = Object.keys(gameState.characters).filter(c => gameState.characters[c].owned);
+
+                ownedChars.forEach(charName => {
+                    const char = gameState.characters[charName];
+                    const xpToNext = xpForLevel(char.level + 1);
+                    const xpPercent = (char.xp / xpToNext) * 100;
+
+                    const card = document.createElement('div');
+                    card.className = 'char-card';
+                    card.dataset.char = charName;
+                    card.innerHTML = `
+                        <img src="${char.img}" alt="${charName}">
+                        <h3>${charName}</h3>
+                        <p>Lvl: ${char.level}</p>
+                        <p>Ataque: ${char.attack}</p>
+                        <p>Vida: ${char.health}</p>
+                        <div class="xp-bar" title="XP: ${char.xp} / ${xpToNext}">
+                            <div style="width: ${xpPercent}%"></div>
+                        </div>
+                    `;
+                    card.addEventListener('click', () => {
+                        gameState.currentCharacter = charName;
+                        // Resetar custos de upgrade ao trocar de personagem
+                        resetUpgradeCosts();
+                        alert(`Você selecionou ${charName}`);
+                        showScreen('difficulty');
+                    });
+                    charList.appendChild(card);
+                });
+            }
+
+            function populateOniSelection() {
+                const oniList = document.getElementById('oni-list');
+                oniList.innerHTML = '';
+                for (const oniKey in enemies) {
+                    const oni = enemies[oniKey];
+                    const button = document.createElement('button');
+                    button.className = 'difficulty-btn'; // Reutiliza o estilo
+                    button.dataset.oni = oniKey;
+                    button.innerHTML = `${oni.name}<br><small>(+${oni.coins} Moedas, +${oni.xp_reward} XP)</small>`;
+                    button.addEventListener('click', () => startBattle(oniKey));
+                    oniList.appendChild(button);
+                }
+            }
+
+            // --- Sistema de XP ---
+            function xpForLevel(level) {
+                return Math.floor(100 * Math.pow(level, 1.5));
+            }
+
+            function gainXp(charName, amount) {
+                const char = gameState.characters[charName];
+                char.xp += amount;
+                let xpToNext = xpForLevel(char.level + 1);
+
+                while (char.xp >= xpToNext) {
+                    char.level++;
+                    char.xp -= xpToNext;
+                    // Bônus de Level Up
+                    char.attack += Math.floor(char.level * 0.5) + 1; // Aumenta ataque
+                    char.health += Math.floor(char.level * 1.5) + 5; // Aumenta vida
+                    alert(`${charName} subiu para o nível ${char.level}!`);
+                    xpToNext = xpForLevel(char.level + 1);
+                }
+            }
+
+            function resetUpgradeCosts() {
+                upgradeCosts.attack = 100;
+                upgradeCosts.health = 80;
+            }
+
+            // --- Sistema de Login/Cadastro e Save/Load com Backend ---
+
+            async function handleLogin(event) {
+                event.preventDefault();
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+
+                try {
+                    const response = await fetch(`${API_URL}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(data.message);
+                    }
+
+                    alert(data.message);
+                    currentUser = { username: data.username, isAdmin: data.isAdmin };
+                    await loadGame();
+                    initGameUI();
+                } catch (error) {
+                    alert(`Erro no login: ${error.message}`);
+                }
+            }
+
+            async function handleRegister(event) {
+                event.preventDefault();
+                const username = document.getElementById('register-username').value;
+                const password = document.getElementById('register-password').value;
+
+                try {
+                    const response = await fetch(`${API_URL}/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.message);
+                    alert(data.message + ' Agora faça o login.');
+                    showScreen('login');
+                } catch (error) {
+                    alert(`Erro no cadastro: ${error.message}`);
+                }
+            }
+
+            function handleLogout() {
+                // Idealmente, também invalidaria o token no backend
+                currentUser = null;
+                // Limpa a UI
+                document.getElementById('logout-button')?.remove();
+                document.getElementById('coin-display').classList.add('hidden');
+                document.getElementById('admin-area').classList.add('hidden');
+                showScreen('login');
+            }
+
+            async function saveGame() {
+                if (!currentUser) return;
+                try {
+                    await fetch(`${API_URL}/api/gamestate`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-username': currentUser.username // Enviando o usuário no header
+                        },
+                        body: JSON.stringify(gameState)
+                    });
+                } catch (error) {
+                    console.error('Falha ao salvar o jogo:', error);
+                    alert('Não foi possível salvar seu progresso. Verifique sua conexão.');
+                }
+            }
+
+            async function loadGame() {
+                if (!currentUser) return;
+                try {
+                    const response = await fetch(`${API_URL}/api/gamestate`, {
+                        headers: { 'x-username': currentUser.username }
+                    });
+                    if (!response.ok) throw new Error('Não foi possível carregar os dados.');
+                    const savedState = await response.json();
+                    gameState = savedState;
+                } catch (error) {
+                    console.error('Falha ao carregar o jogo:', error);
+                    alert('Não foi possível carregar seu progresso. Um novo jogo será iniciado.');
+                }
+            }
+
+            // --- Sistema de Missões ---
+            const missionPool = [
+                { type: 'win_battle', oniKey: 'kyogai', target: 3, description: 'Derrote 3 Kyogai', reward: 150 },
+                { type: 'win_battle', oniKey: 'rui', target: 1, description: 'Vença Rui', reward: 200 },
+                { type: 'win_battle', target: 5, description: 'Vença 5 batalhas (qualquer dificuldade)', reward: 300 },
+            ];
+
+            function generateMission() {
+                if (gameState.mission.active) return;
+
+                const newMission = { ...missionPool[Math.floor(Math.random() * missionPool.length)] };
+                gameState.mission.active = true;
+                gameState.mission.type = newMission.type;
+                gameState.mission.description = newMission.description;
+                gameState.mission.progress = 0;
+                gameState.mission.target = newMission.target;
+                gameState.mission.reward = newMission.reward;
+                if (newMission.oniKey) {
+                    gameState.mission.oniKey = newMission.oniKey;
+                } else {
+                    delete gameState.mission.difficulty;
+                }
+                updateMissionDisplay();
+                saveGame();
+            }
+
+            function checkMissionProgress(actionType, data) {
+                if (!gameState.mission.active || gameState.mission.type !== actionType) return;
+
+                let progressMade = false;
+                if (actionType === 'win_battle') {
+                    if (!gameState.mission.oniKey || gameState.mission.oniKey === data.oniKey) {
+                        gameState.mission.progress++;
+                        progressMade = true;
+                    }
+                }
+
+                if (progressMade && gameState.mission.progress >= gameState.mission.target) {
+                    alert(`Missão Concluída: ${gameState.mission.description}! Você ganhou ${gameState.mission.reward} moedas.`);
+                    gameState.coins += gameState.mission.reward;
+                    gameState.mission.active = false;
+                }
+                updateMissionDisplay();
+            }
+
+            // --- Funções de Admin ---
+            function openAdminPanel(adminName) {
+                document.getElementById('admin-name').textContent = adminName;
+                document.getElementById('admin-money-input').value = '';
+                document.getElementById('admin-attack-input').value = '';
+                document.getElementById('admin-health-input').value = '';
+                showScreen('admin');
+            }
+
+            function adminSetMoney() {
+                const value = parseInt(document.getElementById('admin-money-input').value);
+                if (!isNaN(value) && value >= 0) {
+                    gameState.coins = value;
+                    alert(`Moedas definidas para ${value}.`);
+                    updateCoinDisplay();
+                    saveGame();
+                    document.getElementById('admin-money-input').value = '';
+                }
+            }
+
+            function adminSetAttack() {
+                const value = parseInt(document.getElementById('admin-attack-input').value);
+                if (!isNaN(value) && value > 0) {
+                    const char = gameState.characters[gameState.currentCharacter];
+                    char.attack = value;
+                    alert(`Dano de ${gameState.currentCharacter} definido para ${value}.`);
+                    saveGame();
+                    document.getElementById('admin-attack-input').value = '';
+                }
+            }
+
+            function adminSetHealth() {
+                const value = parseInt(document.getElementById('admin-health-input').value);
+                if (!isNaN(value) && value > 0) {
+                    const char = gameState.characters[gameState.currentCharacter];
+                    char.health = value;
+                    alert(`Vida de ${gameState.currentCharacter} definida para ${value}.`);
+                    saveGame();
+                    document.getElementById('admin-health-input').value = '';
+                }
+            }
+
+
+            // --- Listeners de Eventos ---
+            document.getElementById('play-button').addEventListener('click', () => {
+                populateCharacterSelection();
+                showScreen('characterSelection');
+            });
+
+            document.getElementById('show-register-link').addEventListener('click', () => showScreen('register'));
+            document.getElementById('show-login-link').addEventListener('click', () => showScreen('login'));
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('register-form').addEventListener('submit', handleRegister);
+
+            document.getElementById('pvp-button').addEventListener('click', () => {
+                alert('Modo PvP ainda em desenvolvimento. Por enquanto, será um modo local (hot-seat).');
+                // Futuramente, aqui começaria o fluxo de seleção para P1 e P2.
+            });
+
+            document.getElementById('shop-button').addEventListener('click', () => {
+                populateShop();
+                updateUpgradeSection();
+                showScreen('shop');
+            });
+
+            document.querySelectorAll('.back-to-menu').forEach(btn => {
+                btn.addEventListener('click', () => showScreen('start'));
+            });
+
+            document.querySelector('.back-to-char-select').addEventListener('click', () => {
+                 populateCharacterSelection();
+                 showScreen('characterSelection');
+            })
+
+            document.getElementById('attack-button').addEventListener('click', playerAttack);
+            skillButton.addEventListener('click', playerSkill);
+
+            document.getElementById('upgrade-attack-btn').addEventListener('click', () => upgradeStat('attack'));
+            document.getElementById('upgrade-health-btn').addEventListener('click', () => upgradeStat('health'));
+
+            // Admin Panel Listeners
+            document.getElementById('emanuel-panel-btn').addEventListener('click', () => openAdminPanel('EMANUEL'));
+            document.getElementById('dolly-panel-btn').addEventListener('click', () => openAdminPanel('DOLLY'));
+            document.getElementById('admin-set-money').addEventListener('click', adminSetMoney);
+            document.getElementById('admin-set-attack').addEventListener('click', adminSetAttack);
+            document.getElementById('admin-set-health').addEventListener('click', adminSetHealth);
+
+            // --- Inicialização da UI do Jogo (após login) ---
+            function initGameUI() {
+                populateOniSelection();
+                updateCoinDisplay();
+                if (!gameState.mission.active) {
+                    generateMission();
+                }
+                updateMissionDisplay();
+                updateUIAfterLogin();
+                showScreen('start');
+            }
+
+            // O jogo agora começa na tela de login, initGameUI() é chamado após o login bem-sucedido.
+        });
+    </script>
+</body>
+</html>

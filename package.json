@@ -1,0 +1,16 @@
+{
+  "name": "jogo-dos-cria",
+  "version": "1.0.0",
+  "description": "Um jogo de batalha de turnos inspirado em Demon Slayer com backend.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "emanu",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
